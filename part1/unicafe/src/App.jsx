@@ -4,8 +4,18 @@ const Header = ({ text }) => {
   return <h1>{text}</h1>
 }
 
-const HandleClick = (props) => {
-  console.log('clicked')
+const Statistics = ({ good, neutral, bad }) => {
+  return (
+    <>
+      <Header text='statistics' />
+      <div> good {good}</div>
+      <div> neutral {neutral} </div>
+      <div> bad {bad} </div>
+      <div> all {good + neutral + bad}</div>
+      <div> average {(good - bad) / (good + neutral + bad)}</div>
+      <div> positive {((good) / (good + neutral + bad)) * 100} %</div>
+    </>
+  )
 }
 
 const App = () => {
@@ -20,13 +30,7 @@ const App = () => {
       <button onClick={() => setGood(good + 1)}> good </button>
       <button onClick={() => setNeutral(neutral + 1)}> neutral </button>
       <button onClick={() => setBad(bad + 1)}> bad </button>
-      <Header text='statistics' />
-      <div> good {good}</div>
-      <div> neutral {neutral} </div>
-      <div> bad {bad} </div>
-      <div> all {good + neutral + bad}</div>
-      <div> average {(good - bad) / (good + neutral + bad)}</div>
-      <div> positive {((good) / (good + neutral + bad)) * 100} %</div>
+      <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   )
 }
