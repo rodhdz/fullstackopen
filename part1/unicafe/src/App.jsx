@@ -5,17 +5,26 @@ const Header = ({ text }) => {
 }
 
 const Statistics = ({ good, neutral, bad }) => {
-  return (
-    <>
-      <Header text='statistics' />
-      <div> good {good}</div>
-      <div> neutral {neutral} </div>
-      <div> bad {bad} </div>
-      <div> all {good + neutral + bad}</div>
-      <div> average {(good - bad) / (good + neutral + bad)}</div>
-      <div> positive {((good) / (good + neutral + bad)) * 100} %</div>
-    </>
-  )
+  if ((good + neutral + bad) > 0) {
+    return (
+      <>
+        <Header text='statistics' />
+        <div> good {good}</div>
+        <div> neutral {neutral} </div>
+        <div> bad {bad} </div>
+        <div> all {good + neutral + bad}</div>
+        <div> average {(good - bad) / (good + neutral + bad)}</div>
+        <div> positive {((good) / (good + neutral + bad)) * 100} %</div>
+      </>
+    )
+  } else {
+    return (
+      <>
+        <Header text='statistics' />
+        <div> No feedback given </div>
+      </>
+    )
+  }
 }
 
 const App = () => {
