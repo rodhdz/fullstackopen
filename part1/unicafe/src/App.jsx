@@ -9,12 +9,28 @@ const Statistics = ({ good, neutral, bad }) => {
     return (
       <>
         <Header text='statistics' />
-        <Statisticline text='good' value={good} />
-        <Statisticline text='neutral' value={neutral} />
-        <Statisticline text='bad' value={bad} />
-        <Statisticline text='all' value={good + neutral + bad} />
-        <Statisticline text='average' value={(good - bad) / (good + neutral + bad)} />
-        <Statisticline text='positive' value={((good) / (good + neutral + bad)) * 100} />
+        <table>
+          <tbody>
+            <tr>
+              <Statisticline text='good' value={good} />
+            </tr>
+            <tr>
+              <Statisticline text='neutral' value={neutral} />
+            </tr>
+            <tr>
+              <Statisticline text='bad' value={bad} />
+            </tr>
+            <tr>
+              <Statisticline text='all' value={good + neutral + bad} />
+            </tr>
+            <tr>
+              <Statisticline text='average' value={(good - bad) / (good + neutral + bad)} />
+            </tr>
+            <tr>
+              <Statisticline text='positive' value={((good) / (good + neutral + bad)) * 100} />
+            </tr>
+          </tbody>
+        </table>
       </>
     )
   } else {
@@ -39,13 +55,17 @@ const Statisticline = ({ text, value }) => {
   if (text == 'positive') {
     return (
       <>
-        <div> {text} {value} %</div>
+        <td> {text} </td>
+        <td> {value} </td>
+        <td> % </td>
       </>
     )
   } else {
     return (
       <>
-        <div> {text} {value} </div>
+        <td> {text} </td>
+        <td>  {value} </td>
+        <td> </td>
       </>
     )
   }
