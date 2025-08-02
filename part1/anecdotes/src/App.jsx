@@ -14,10 +14,16 @@ const Random = () => {
 }
 
 const Voting = (voted, selected) => {
-  const copy = { ...voted }
+  const copy = [...voted]
   copy[selected] += 1
   console.log(copy)
   return copy
+}
+
+const MostVoted = (voted) => {
+  const largest = Math.max(...voted)
+  console.log(largest)
+  return voted.indexOf(largest)
 }
 
 const App = () => {
@@ -38,12 +44,18 @@ const App = () => {
   return (
     <>
       <div>
+        <h1>Anecdote of the day</h1>
         {anecdotes[selected]}
       </div>
       <div>has {voted[selected]} votes</div>
       <div>
         <Button onClick={() => setVoted(() => Voting(voted, selected))} text="vote" />
         <Button onClick={() => setSelected(Random)} text="next vote" />
+      </div>
+      <div>
+        <h1>Anecdote with most votes</h1>
+        <div>{anecdotes[MostVoted(voted)]}</div>
+        <div>has {voted[MostVoted(voted)]} votes</div>
       </div>
     </>
   )
