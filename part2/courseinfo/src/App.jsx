@@ -15,18 +15,12 @@ const Part = ({ part }) => (
 )
 
 const Total = ({ parts }) => {
-
-
-  const exercises = parts.map(part => part.exercises)
-  const total = exercises.reduce((total, currrent) => total + currrent, 0)
   return (
-    <p><b>total of {total} exercises </b></p>
+    <p><b>total of {parts.reduce((t, p) => t + p.exercises, 0)} exercises </b></p>
   )
 }
 
 const Course = ({ course }) => {
-
-
   return (
     < div >
       <Header course={course.name} />
