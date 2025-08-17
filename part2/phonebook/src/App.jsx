@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
 import personService from './services/phones.js'
+import './index.css'
 
 const Filter = ({ filter, handleFilterChange }) => {
   return (
@@ -44,6 +45,7 @@ const App = () => {
   const [newPhone, setNewPhone] = useState('')
   const [filter, setNewFilter] = useState('')
   const filteredPersons = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
+  const [notificationMessage, setNotificationMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -72,9 +74,14 @@ const App = () => {
     const changedPerson = { ...person, number: contact.number }
     confirm(`${contact.name} is already added to the phonebook, 
         replace the old number with a new one?`)
-      ? personService
+      ?
+      personService
         .update(changedPerson)
-        .then(data => setPersons(persons.map(p => p.id === data.id ? changedPerson : p)))
+        .then(data => {
+          setPersons(persons.map(p => p.id === data.id ? changedPerson : p))
+          setNotificationMessage(`Updated ${contact.name}`)
+          setTimeout(() => { setNotificationMessage(null) }, 5000)
+        })
       : {}
     setNewName('')
     setNewPhone('')
@@ -89,6 +96,8 @@ const App = () => {
         .create(contact)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
+          setNotificationMessage(`Added ${contact.name}`)
+          setTimeout(() => { setNotificationMessage(null) }, 5000)
           setNewName('')
           setNewPhone('')
         });
@@ -98,9 +107,24 @@ const App = () => {
     setNewFilter(event.target.value)
   }
 
+  const Notification = ({ message }) => {
+    if (message === null) {
+      return null
+    }
+
+    return (
+      <div className='error'>
+        {message}
+      </div>
+    )
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification message={notificationMessage} />
+
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
 
       <h3>add a new</h3>
