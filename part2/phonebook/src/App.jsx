@@ -28,14 +28,14 @@ const PersonForm = ({ addName, newName, newPhone, handleNameChange, handlePhoneC
   )
 }
 
-const Persons = ({ filteredPersons }) => {
+const Person = ({ person, deleteName }) => {
   return (
     <div>
-      {filteredPersons.map(
-        person => <div key={person.id}>{person.name} {person.number}</div>
-      )}
+      {person.name} {person.number} { }
+      <button onClick={deleteName}>delete</button>
     </div>
   )
+
 }
 
 const App = () => {
@@ -52,13 +52,21 @@ const App = () => {
   }, [])
 
   const handleNameChange = (event) => {
-    console.log(event.target.value)
     setNewName(event.target.value)
   }
 
   const handlePhoneChange = (event) => {
     setNewPhone(event.target.value)
   }
+
+  const deleteNameOf = (id) => {
+    const person = persons.find(i => i.id === id)
+    confirm(`Delete ${person.name}`) ?
+      personService.delPerson(id)
+        .then(person => setPersons(persons.filter(p => p.id !== id)))
+      : {}
+  }
+
 
   const addName = (event) => {
     event.preventDefault()
@@ -92,7 +100,15 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
-      <Persons filteredPersons={filteredPersons} />
+      <div>
+        {filteredPersons.map(p => (
+          <Person
+            key={p.id}
+            person={p}
+            deleteName={() => deleteNameOf(p.id)}
+          />
+        ))}
+      </div>
     </div>
   )
 }
