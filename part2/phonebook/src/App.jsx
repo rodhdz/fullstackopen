@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import axios from 'axios'
 import { useEffect } from 'react'
+import personService from './services/phones.js'
 
 const Filter = ({ filter, handleFilterChange }) => {
   return (
@@ -46,9 +46,9 @@ const App = () => {
   const filteredPersons = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then(response => setPersons(response.data))
+    personService
+      .getAll()
+      .then(initialPersons => setPersons(initialPersons))
   }, [])
 
   const handleNameChange = (event) => {
@@ -65,11 +65,10 @@ const App = () => {
     const contact = { name: newName, number: newPhone }
     persons.some(i => i.name === newName) ?
       alert(`${newName} is already added to the phonebook`)
-      : axios
-        .post('http://localhost:3001/persons', contact)
-        .then(response => {
-          console.log(response)
-          setPersons(persons.concat(response.data))
+      : personService
+        .create(contact)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewPhone('')
         });
