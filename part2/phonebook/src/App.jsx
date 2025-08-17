@@ -67,12 +67,24 @@ const App = () => {
       : {}
   }
 
+  const updatePhone = (contact) => {
+    const person = persons.find(i => i.name === contact.name)
+    const changedPerson = { ...person, number: contact.number }
+    confirm(`${contact.name} is already added to the phonebook, 
+        replace the old number with a new one?`)
+      ? personService
+        .update(changedPerson)
+        .then(data => setPersons(persons.map(p => p.id === data.id ? changedPerson : p)))
+      : {}
+    setNewName('')
+    setNewPhone('')
+  }
+
 
   const addName = (event) => {
     event.preventDefault()
     const contact = { name: newName, number: newPhone }
-    persons.some(i => i.name === newName) ?
-      alert(`${newName} is already added to the phonebook`)
+    persons.some(i => i.name === newName) ? updatePhone(contact)
       : personService
         .create(contact)
         .then(returnedPerson => {
