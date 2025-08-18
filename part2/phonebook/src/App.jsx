@@ -46,6 +46,7 @@ const App = () => {
   const [filter, setNewFilter] = useState('')
   const filteredPersons = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
   const [notificationMessage, setNotificationMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(false)
 
   useEffect(() => {
     personService
@@ -66,6 +67,15 @@ const App = () => {
     confirm(`Delete ${person.name}`) ?
       personService.delPerson(id)
         .then(person => setPersons(persons.filter(p => p.id !== id)))
+        .catch(error => {
+          setErrorMessage(true)
+          setNotificationMessage(`Information of ${person.name} is already deleted from server.`)
+          setPersons(persons.filter(p => p.id !== id))
+          setTimeout(() => {
+            setNotificationMessage(null)
+            setErrorMessage(false)
+          }, 5000)
+        })
       : {}
   }
 
@@ -81,6 +91,15 @@ const App = () => {
           setPersons(persons.map(p => p.id === data.id ? changedPerson : p))
           setNotificationMessage(`Updated ${contact.name}`)
           setTimeout(() => { setNotificationMessage(null) }, 5000)
+        })
+        .catch(error => {
+          setErrorMessage(true)
+          setNotificationMessage(`Information of ${person.name} is already deleted from server.`)
+          setPersons(persons.filter(p => p.name !== contact.name))
+          setTimeout(() => {
+            setNotificationMessage(null)
+            setErrorMessage(false)
+          }, 5000)
         })
       : {}
     setNewName('')
@@ -112,11 +131,19 @@ const App = () => {
       return null
     }
 
-    return (
-      <div className='error'>
-        {message}
-      </div>
-    )
+    if (!errorMessage) {
+      return (
+        <div className='notification'>
+          {message}
+        </div>
+      )
+    } else {
+      return (
+        <div className='error'>
+          {message}
+        </div>
+      )
+    }
   }
 
   return (
