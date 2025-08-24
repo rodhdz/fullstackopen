@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
 import countriesService from './services/countries.js'
-import axios from 'axios'
 
 const Filter = ({ filter, handleFilterChange }) => {
   return (
@@ -11,7 +10,79 @@ const Filter = ({ filter, handleFilterChange }) => {
   )
 }
 
-const Countries = ({ filteredCountries }) => {
+const Weather = ({ capital }) => {
+
+  const [capitalWeather, setCapitalWeather] = useState(
+    {
+      temperature: '',
+      image: null,
+      wind: ''
+    }
+  )
+
+  useEffect(() => {
+    countriesService
+      .weather(capital)
+      .then(response => setCapitalWeather(
+        {
+          temperature: response.current.temp_c,
+          image: 'https:' + response.current.condition.icon,
+          wind: response.current.wind_kph
+        }
+      ))
+  }, [])
+
+  return (
+    <>
+      <div>
+        <h3>
+          Weather in {capital}
+        </h3>
+      </div>
+      <div>
+        Temperature {capitalWeather.temperature} Celsius
+      </div>
+      <img src={capitalWeather.image} />
+      <div>
+        Wind {capitalWeather.wind} m/s
+      </div>
+    </>
+  )
+}
+
+const Countries = ({ filteredCountries, setFilter }) => {
+
+  const Country = ({ country }) => {
+
+    const handleShowCountry = () => {
+      setFilter(country.name.common)
+    }
+
+    return (
+      <div>
+        {country.name.common}  <button onClick={handleShowCountry}>Show</button>
+      </div>
+    )
+  }
+
+  const MainCountry = ({ country }) => {
+    const languages = country.languages
+    return (
+      <div>
+        <div><h2>{country.name.common}</h2></div>
+        <div>Capital {country.capital}</div>
+        <div>Area {country.area}</div>
+        <div><h3>Languages</h3></div>
+        <ul>
+          {Object.keys(languages).map(key => (
+            <li key={key}>{languages[key]}</li>
+          ))}
+        </ul>
+        <img src={country.flags.png} crossOrigin="anonymous" />
+        <Weather capital={country.capital} />
+      </div>
+    )
+  }
 
   if (filteredCountries === null) {
     return null
@@ -35,57 +106,26 @@ const Countries = ({ filteredCountries }) => {
         {filteredCountries.map(country => (
           <MainCountry key={country.name.common} country={country} />
         ))}
-        {/*}        <h2>{country.name.common}</h2>
-        <div>Capital {country.capital}</div>
-        <div>Area {country.area}</div>
-
-        <h3>Languages</h3> */}
       </div >
-
     )
   }
 }
 
-const Country = ({ country }) => {
-  return (
-    <div>
-      <div>{country.name.common}</div>
-    </div>
-  )
-}
 
-const MainCountry = ({ country }) => {
-  const languages = country.languages
-  console.log("languages", languages)
-  return (
-    <div>
-      <div><h2>{country.name.common}</h2></div>
-      <div>Capital {country.capital}</div>
-      <div>Area {country.area}</div>
-      <div><h3>Languages</h3></div>
-      <ul>
-        {Object.keys(languages).map(key => (
-          <li key={key}>{languages[key]}</li>
-        ))}
-      </ul>
-      <img src={country.flags.png} crossOrigin="anonymous" />
-    </div>
-  )
-}
 
 function App() {
-  const [filter, setNewFilter] = useState('')
-  const [countries, setNewCountries] = useState([])
+  const [filter, setFilter] = useState('')
+  const [countries, setCountries] = useState([])
   const filteredCountries = countries.filter(country => country.name.common.toLowerCase().includes(filter.toLowerCase()))
 
   useEffect(() => {
-    axios
-      .get("https://studies.cs.helsinki.fi/restcountries/api/all")
-      .then(response => setNewCountries(response.data))
+    countriesService
+      .getAll()
+      .then((response) => setCountries(response))
   }, [])
 
   const handleFilterChange = (event) => {
-    setNewFilter(event.target.value)
+    setFilter(event.target.value)
   }
 
   return (
@@ -94,15 +134,8 @@ function App() {
         <Filter filter={filter} handleFilterChange={handleFilterChange} />
       </div>
       <div>
-        <Countries filteredCountries={filteredCountries} />
+        <Countries filteredCountries={filteredCountries} setFilter={setFilter} />
       </div>
-
-      {/*}      <div>
-        {filteredCountries.map(country => (
-          console.log("country", country.name.com),
-          <Country key={country.name.common} country={country} />
-        ))}
-      </div>*/}
     </>
   )
 }
